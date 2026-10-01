@@ -58,6 +58,16 @@ def oku(yol):
         return ham.decode("utf-16", errors="replace")
     return ham.decode("utf-8-sig", errors="replace")
 
+def sql_kodu(metin):
+    """SQL metninden yorumlari atar.
+
+    Sablon dosyalarinin KENDI yorumlarinda "CREATE TABLE komutunuzu yazin"
+    gibi ifadeler gectigi icin, ham metinde anahtar kelime aramak bos teslimi
+    gecerli sayiyordu. Denetimler bu fonksiyonun ciktisi uzerinde yapilir.
+    """
+    metin = re.sub(r"/\*.*?\*/", " ", metin or "", flags=re.S)
+    return re.sub("--.*", " ", metin)
+
 
 def baglanti():
     return psycopg.connect(
@@ -118,7 +128,7 @@ def kontrol_g1(con):
 # ------------------------------------------------------------- Görev 2
 def kontrol_g2(con):
     sql = oku("sql/g2_indeksler.sql")
-    if not sql or "CREATE" not in sql.upper():
+    if not sql or "CREATE" not in sql_kodu(sql).upper():
         kaydet("Görev 2 (İndeksler)", 0, 30,
                "sql/g2_indeksler.sql bulunamadı veya CREATE INDEX içermiyor.")
         return False
