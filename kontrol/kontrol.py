@@ -155,16 +155,29 @@ def kontrol_g2(con):
         GROUP BY i.relname""").fetchall()
     kolonlar = {tuple(r[1]) for r in satirlar}
 
+    def ile_basliyor(sutun):
+        """Bu sutunun ILK sirada oldugu herhangi bir indeks var mi?
+
+        S1'i hizlandiran sey uye_id'nin indeksin ILK sutunu olmasidir:
+        (uye_id) de (uye_id, sure_dk) de isi gorur, ikincisi AVG'yi de
+        kapsadigi icin daha iyidir. Foyun savunma sorusu ogrenciyi zaten
+        o kapsayici indekse yonlendiriyor ("AVG(sure_dk) yuzunden
+        planlayici neden yine tabloya gitti? Hangi indeks bunu da ortadan
+        kaldirirdi?"); dogru cevabi UYGULAYAN ogrenci puan kaybetmemeli.
+        Ayni mantik S2 icin giris_zamani'nda da gecerlidir.
+        """
+        return any(k and k[0] == sutun for k in kolonlar)
+
     puan = 0
     mesajlar = []
-    if ("uye_id",) in kolonlar:
+    if ile_basliyor("uye_id"):
         puan += 10
     else:
-        mesajlar.append("uye_id üzerinde indeks yok.")
-    if ("giris_zamani",) in kolonlar:
+        mesajlar.append("uye_id ile başlayan bir indeks yok.")
+    if ile_basliyor("giris_zamani"):
         puan += 10
     else:
-        mesajlar.append("giris_zamani üzerinde indeks yok.")
+        mesajlar.append("giris_zamani ile başlayan bir indeks yok.")
     if ("salon_id", "giris_zamani") in kolonlar:
         puan += 10
     elif ("giris_zamani", "salon_id") in kolonlar:
