@@ -1,0 +1,21 @@
+=== Disk Boyutları ===
+table
+-------
+129 MB
+
+indexrelname | pg_size_pretty
+----------------------------------
+girisler_pkey | 48 MB
+idx_girisler_uye | 14 MB
+idx_girisler_zamani | 14 MB
+idx_girisler_salon_zamani | 18 MB
+
+=== Yazma Maliyeti (100.000 INSERT) ===
+İndeksli Ekleme Süresi:
+Time: 77026.000 ms (1:17.026)
+
+İndekssiz Ekleme Süresi:
+Time: 94.600 ms
+
+=== Değerlendirme ===
+Yorum: Veritabanına eklenen her indeks, okuma sorgularını (SELECT) önemli ölçüde hızlandırsa da disk alanını ciddi oranda artırır ve INSERT/UPDATE/DELETE işlemlerinde tüm indeks ağaçlarının yeniden güncellenmesine yol açarak yazma performansını felç eder. Bu yüzden her sütuna rastgele indeks eklenmemeli, yalnızca sık sorgulanan ve performans ihtiyacı olan alanlara indeks koyulmalıdır.

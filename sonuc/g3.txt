@@ -1,0 +1,64 @@
+Timing is on.
+                                                               QUERY PLAN                                                                
+-----------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=14471.06..14471.07 rows=1 width=40) (actual time=9.826..9.827 rows=1 loops=1)
+   ->  Bitmap Heap Scan on girisler  (cost=115.33..14420.15 rows=10181 width=4) (actual time=1.427..9.274 rows=10245 loops=1)
+         Recheck Cond: (uye_id = 42)
+         Heap Blocks: exact=7450
+         ->  Bitmap Index Scan on idx_girisler_uye  (cost=0.00..112.78 rows=10181 width=0) (actual time=0.791..0.792 rows=10245 loops=1)
+               Index Cond: (uye_id = 42)
+ Planning Time: 0.255 ms
+ Execution Time: 9.901 ms
+(8 rows)
+
+Time: 10.450 ms
+ count |         avg         
+-------+---------------------
+ 10245 | 94.4830649097120547
+(1 row)
+
+Time: 4.131 ms
+                                                                             QUERY PLAN                                                                             
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=1591.76..1591.77 rows=1 width=8) (actual time=3.508..3.508 rows=1 loops=1)
+   ->  Index Only Scan using idx_girisler_zamani on girisler  (cost=0.43..1473.17 rows=47437 width=0) (actual time=0.027..2.322 rows=47381 loops=1)
+         Index Cond: ((giris_zamani >= '2026-01-01 00:00:00'::timestamp without time zone) AND (giris_zamani < '2026-02-01 00:00:00'::timestamp without time zone))
+         Heap Fetches: 0
+ Planning Time: 0.045 ms
+ Execution Time: 3.513 ms
+(6 rows)
+
+Time: 3.658 ms
+ count 
+-------
+ 47381
+(1 row)
+
+Time: 1.738 ms
+                                                                       QUERY PLAN                                                                        
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+ Aggregate  (cost=1051.34..1051.35 rows=1 width=8) (actual time=2.374..2.374 rows=1 loops=1)
+   ->  Index Only Scan using idx_girisler_salon_zamani on girisler  (cost=0.43..982.13 rows=27685 width=0) (actual time=0.021..1.681 rows=27689 loops=1)
+         Index Cond: ((salon_id = 3) AND (giris_zamani >= '2026-06-01 00:00:00'::timestamp without time zone))
+         Heap Fetches: 0
+ Planning Time: 0.026 ms
+ Execution Time: 2.379 ms
+(6 rows)
+
+Time: 2.483 ms
+ count 
+-------
+ 27689
+(1 row)
+
+Time: 1.049 ms
+
+--- Karşılaştırma Tablosu ---
+Sorgu | İndekssiz Süre | İndeksli Süre | Hızlanma Katı
+------------------------------------------------------
+S1    | 22.733 ms      | 9.901 ms      | ~2.3 kat
+S2    | 21.942 ms      | 3.513 ms      | ~6.2 kat
+S3    | 20.454 ms      | 2.379 ms      | ~8.6 kat
+
+Yorum:
+En çok hızlanma S3 sorgusunda elde edilmiştir. Bunun nedeni (salon_id, giris_zamani) bileşik indeksinin (composite index) doğrudan aranan salon ve tarih aralığına nokta atışı erişim sağlaması ve Index Only Scan yapmasıdır. S2 sorgusu tek sütunlu indeks ile Index Only Scan kullanarak belirgin bir hızlanma yaşamıştır. S1 sorgusu ise indeksi (Bitmap Index Scan) kullansa da AVG(sure_dk) değerini hesaplamak için tablo bloklarına gitmek zorunda kaldığından hızlanması diğerlerine kıyasla daha sınırlı kalmıştır.

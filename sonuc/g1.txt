@@ -1,0 +1,66 @@
+Timing is on.
+                                                               QUERY PLAN                                                               
+----------------------------------------------------------------------------------------------------------------------------------------
+ Finalize Aggregate  (cost=26660.04..26660.05 rows=1 width=40) (actual time=21.157..22.699 rows=1 loops=1)
+   ->  Gather  (cost=26659.81..26660.02 rows=2 width=40) (actual time=21.098..22.680 rows=3 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         ->  Partial Aggregate  (cost=25659.81..25659.82 rows=1 width=40) (actual time=20.150..20.150 rows=1 loops=3)
+               ->  Parallel Seq Scan on girisler  (cost=0.00..25638.60 rows=4242 width=4) (actual time=0.011..19.966 rows=3415 loops=3)
+                     Filter: (uye_id = 42)
+                     Rows Removed by Filter: 676944
+ Planning Time: 0.191 ms
+ Execution Time: 22.733 ms
+(10 rows)
+
+Time: 23.304 ms
+ count |         avg         
+-------+---------------------
+ 10245 | 94.4830649097120547
+(1 row)
+
+Time: 21.234 ms
+                                                                                 QUERY PLAN                                                                                 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Finalize Aggregate  (cost=28814.35..28814.36 rows=1 width=8) (actual time=20.818..21.933 rows=1 loops=1)
+   ->  Gather  (cost=28814.14..28814.35 rows=2 width=8) (actual time=20.769..21.930 rows=3 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         ->  Partial Aggregate  (cost=27814.14..27814.15 rows=1 width=8) (actual time=19.965..19.965 rows=1 loops=3)
+               ->  Parallel Seq Scan on girisler  (cost=0.00..27764.72 rows=19765 width=0) (actual time=0.009..19.561 rows=15794 loops=3)
+                     Filter: ((giris_zamani >= '2026-01-01 00:00:00'::timestamp without time zone) AND (giris_zamani < '2026-02-01 00:00:00'::timestamp without time zone))
+                     Rows Removed by Filter: 664565
+ Planning Time: 0.049 ms
+ Execution Time: 21.942 ms
+(10 rows)
+
+Time: 22.155 ms
+ count 
+-------
+ 47381
+(1 row)
+
+Time: 19.921 ms
+                                                               QUERY PLAN                                                                
+-----------------------------------------------------------------------------------------------------------------------------------------
+ Finalize Aggregate  (cost=28793.78..28793.79 rows=1 width=8) (actual time=19.271..20.444 rows=1 loops=1)
+   ->  Gather  (cost=28793.56..28793.77 rows=2 width=8) (actual time=19.222..20.440 rows=3 loops=1)
+         Workers Planned: 2
+         Workers Launched: 2
+         ->  Partial Aggregate  (cost=27793.56..27793.57 rows=1 width=8) (actual time=18.500..18.501 rows=1 loops=3)
+               ->  Parallel Seq Scan on girisler  (cost=0.00..27764.72 rows=11535 width=0) (actual time=0.007..18.267 rows=9230 loops=3)
+                     Filter: ((giris_zamani >= '2026-06-01 00:00:00'::timestamp without time zone) AND (salon_id = 3))
+                     Rows Removed by Filter: 671129
+ Planning Time: 0.043 ms
+ Execution Time: 20.454 ms
+(10 rows)
+
+Time: 20.646 ms
+ count 
+-------
+ 27689
+(1 row)
+
+Time: 18.904 ms
+
+Özet Süreler: S1: 22.733 ms, S2: 21.942 ms, S3: 20.454 ms
